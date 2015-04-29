@@ -1,0 +1,13 @@
+Assignment:
+
+1. Implement a connected components finding algorithm
+find unique blobs (ie, identify each white region) 
+some test images: 
+https://dl.dropboxusercontent.com/u/92337283/forSFPC/blobs/test1.png
+https://dl.dropboxusercontent.com/u/92337283/forSFPC/blobs/test2.png
+https://dl.dropboxusercontent.com/u/92337283/forSFPC/blobs/test3.png
+https://dl.dropboxusercontent.com/u/92337283/forSFPC/blobs/test4.png
+https://dl.dropboxusercontent.com/u/92337283/forSFPC/blobs/test5.png
+you can do 4 way or 8 way connectivity (ie, pixels are connected 4way if they are touching horizontally / vertically -- 8 way if they are touch horizontally / vertically or diagonally)
+
+2. Generate chain codes  ("freeman chain code") describing the outside edges of a connected component / blob. 
