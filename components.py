@@ -60,18 +60,22 @@ class ComponentMap:
         self._next_key += 1
         return self.component_map[point]
 
-def get_prior_neighbors(pt):
+def get_prior_neighbors(pt, size):
     """
     Get neighboring points that are on a previous row, or are just to the left
-    of the given point. In other words, neighbors that come previous to this
-    one in the standard iteration order.
+    of the given point. In other words, neighbors that occur previous to this
+    point in the standard iteration order.
     """
     # todo: option for 4 vs 8-way
     x, y = pt
-    if x > 0:
-        yield (x-1, y)
+    if x > 0 and y > 0:
+        yield (x-1, y-1)
     if y > 0:
         yield (x, y-1)
+        if x < (size[0] - 1):
+            yield (x+1, y-1)
+    if x > 0:
+        yield (x-1, y)
 
 def iterpixels(size):
     w, h = size
@@ -93,7 +97,7 @@ def find_components(im):
         # neighbors.
 
         debug(p)
-        neighbors = get_prior_neighbors(p)
+        neighbors = get_prior_neighbors(p, im.size)
         neighbor_components = cmap.get_components(neighbors)
 
         # get_component(s) returns None for black pixels. Remove those:
