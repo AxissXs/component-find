@@ -6,6 +6,8 @@ from PIL import Image
 
 # todo: color edges of components
 
+debug = print
+
 class ComponentMap:
     """
     A class that maps points to component numbers. Basically a union-find
@@ -25,9 +27,12 @@ class ComponentMap:
         """
         return map(self.get_component, points)
 
-    def _merge_set_into_base(self, component, base):
-        # TODO
-        pass
+    def _merge_set_into_base(self, merge_from, base):
+        debug("Merging", merge_from, "into", base)
+        # todo: make O(log n) instead of O(n)
+        for k, v in self.component_map.items():
+            if v == merge_from:
+                self.component_map[k] = base
 
     def merge_components(self, components):
         """
@@ -51,6 +56,11 @@ class ComponentMap:
         return self.component_map[point]
 
 def get_prior_neighbors(pt):
+    """
+    Get neighboring points that are on a previous row, or are just to the left
+    of the given point. In other words, neighbors that come previous to this
+    one in the standard iteration order.
+    """
     # todo: option for 4 vs 8-way
     x, y = pt
     result = []
@@ -79,15 +89,18 @@ def find_components(im):
         # It's a white pixel. Merge its set with those of it's left/above
         # neighbors.
 
+        debug(p)
         neighbors = get_prior_neighbors(p)
         neighbor_components = cmap.get_components(neighbors)
 
         # get_component(s) returns None for black pixels. Remove those:
         # (ComponentMap never uses 0 for a component number)
         active_neighbor_components = list(filter(None, neighbor_components))
+        debug(active_neighbor_components)
 
         if active_neighbor_components:
             c = cmap.merge_components(active_neighbor_components)
+            debug("Merged into", c)
             cmap.add(p, c)
         else:
             cmap.make_component(p)
@@ -105,9 +118,7 @@ class ColorMap(dict):
         if k is None:
             return (0, 0, 0)
         if k not in self:
-            color = self.next_color()
             self[k] = self.next_color()
-            return color
         return super().__getitem__(k)
 
     def next_color(self):
