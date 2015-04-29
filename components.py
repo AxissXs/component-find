@@ -68,12 +68,10 @@ def get_prior_neighbors(pt):
     """
     # todo: option for 4 vs 8-way
     x, y = pt
-    result = []
     if x > 0:
-        result.append((x-1, y))
+        yield (x-1, y)
     if y > 0:
-        result.append((x, y-1))
-    return result
+        yield (x, y-1)
 
 def iterpixels(size):
     w, h = size
