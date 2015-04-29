@@ -4,9 +4,11 @@ import sys
 
 from PIL import Image
 
-# todo: color edges of components
+def null(*args, **kwargs):
+    pass
 
-debug = print
+#debug = print
+debug = null
 
 class ComponentMap:
     """
@@ -17,6 +19,9 @@ class ComponentMap:
     def __init__(self):
         self._next_key = 1
         self.component_map = {} # maps points -> Components
+
+    def __len__(self):
+        return len(set(self.component_map.values()))
 
     def get_component(self, point):
         return self.component_map.get(point)
@@ -155,10 +160,10 @@ def main():
     input_file_path = sys.argv[1]
     output_file_path = sys.argv[2]
     input_image = Image.open(input_file_path).convert('1')
-    components = find_components(input_image)
-    output_image = color_code_components(input_image.size, components)
+    component_map = find_components(input_image)
+    output_image = color_code_components(input_image.size, component_map)
     output_image.save(output_file_path)
-    print("Saved", output_file_path)
+    print("Saved", output_file_path, "with", len(component_map), "colors.")
 
 if __name__ == '__main__':
     main()
