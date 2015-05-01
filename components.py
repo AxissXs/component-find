@@ -63,7 +63,7 @@ class ComponentMap:
 def get_prior_neighbors(pt, size):
     """
     Get neighboring points that are on a previous row, or are just to the left
-    of the given point. In other words, neighbors that occur previous to this
+    of the given point. In other words, neighbors that come previous to this
     point in the standard iteration order.
     """
     # todo: option for 4 vs 8-way
@@ -113,22 +113,17 @@ def find_components(im):
             cmap.make_component(p)
     return cmap
 
-class ColorMap(dict):
-    """Automatically assigns RGB color values."""
+class ColorGen:
+    """Generates an infinite series of nicely-spaced colors."""
     def __init__(self):
         self.h = 0
         self.s = .7
         self.v = .8
 
-    def __getitem__(self, k):
-        # Black background
-        if k is None:
-            return (0, 0, 0)
-        if k not in self:
-            self[k] = self.next_color()
-        return super().__getitem__(k)
+    def __iter__(self):
+        return self
 
-    def next_color(self):
+    def __next__(self):
         import colorsys
         # Basically this: http://martin.ankerl.com/2009/12/09/how-to-create-random-colors-programmatically/
         self.h = (self.h + 0.61803) % 1
@@ -142,7 +137,10 @@ def color_code_components(size, component_map):
     each component is colored differently, keeping
     a black background.
     """
-    color_map = ColorMap()
+    from collections import defaultdict
+    color_gen = ColorGen()
+    color_map = defaultdict(color_gen.__next__)
+    color_map[None] = (0, 0, 0) # Map background component to black
     im = Image.new("RGB", size)
     color_data = []
     for p in iterpixels(size):
